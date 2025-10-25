@@ -1,0 +1,64 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-users
+      author: yourname
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: image_url
+                  type: varchar(512)
+
+  - changeSet:
+      id: 002-create-user-hairtypes
+      author: yourname
+      changes:
+        - createTable:
+            tableName: user_hairtypes
+            columns:
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: porosity
+                  type: porosity_enum
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_colored
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: thickness
+                  type: thickness_enum
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: user_hairtypes
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_user_hairtypes_user_id
+            onDelete: restrict
+            onUpdate: restrict
