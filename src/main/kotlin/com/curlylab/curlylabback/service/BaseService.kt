@@ -1,7 +1,7 @@
 package com.curlylab.curlylabback.service
 
 import com.curlylab.curlylabback.repository.BaseInterfaceRepository
-import java.util.*
+import java.util.UUID
 
 interface BaseInterfaceService<T> {
     fun getById(id: UUID): T?

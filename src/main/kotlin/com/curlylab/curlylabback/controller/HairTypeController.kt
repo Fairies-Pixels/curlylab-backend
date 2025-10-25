@@ -4,7 +4,7 @@ import com.curlylab.curlylabback.model.HairType
 import com.curlylab.curlylabback.service.HairTypeService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.util.*
+import java.util.UUID
 
 @RestController
 @RequestMapping("/hairtypes")

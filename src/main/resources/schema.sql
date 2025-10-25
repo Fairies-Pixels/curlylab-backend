@@ -1,8 +1,6 @@
--- Создание enum-типов
 CREATE TYPE IF NOT EXISTS public.porosity_enum AS ENUM ('high', 'low', 'medium');
 CREATE TYPE IF NOT EXISTS public.thickness_enum AS ENUM ('thick', 'thin');
 
--- Таблица users
 CREATE TABLE IF NOT EXISTS public.users
 (
     id uuid NOT NULL PRIMARY KEY,
@@ -11,7 +9,6 @@ CREATE TABLE IF NOT EXISTS public.users
     image_url varchar(512)
 );
 
--- Таблица user_hairtypes
 CREATE TABLE IF NOT EXISTS public.user_hairtypes
 (
     user_id uuid NOT NULL PRIMARY KEY,

@@ -1,6 +1,6 @@
 package com.curlylab.curlylabback.repository
 
-import java.util.*
+import java.util.UUID
 
 interface BaseInterfaceRepository<T> {
     fun get(id: UUID): T?
