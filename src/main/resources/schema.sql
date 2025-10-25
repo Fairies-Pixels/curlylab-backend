@@ -20,3 +20,12 @@ CREATE TABLE IF NOT EXISTS public.user_hairtypes
         ON UPDATE RESTRICT
         ON DELETE RESTRICT
 );
+
+CREATE TABLE IF NOT EXISTS public.products
+(
+    id uuid NOT NULL PRIMARY KEY,
+    name varchar(255) NOT NULL,
+    description text,
+    tags text,
+    image_url varchar(512)
+);
