@@ -20,21 +20,21 @@ class ReviewsController(
     }
 
     @PostMapping
-    fun createUser(@RequestBody review: Reviews): ResponseEntity<String> {
+    fun createReview(@RequestBody review: Reviews): ResponseEntity<String> {
         val created = reviewsService.create(review)
         return if (created) ResponseEntity.ok("Review has created!")
         else ResponseEntity.badRequest().body("Failed to create a review")
     }
 
     @PutMapping("/{id}")
-    fun updateUser(@PathVariable id: UUID, @RequestBody review: MarkAndReview): ResponseEntity<Reviews> {
+    fun updateReview(@PathVariable id: UUID, @RequestBody review: MarkAndReview): ResponseEntity<Reviews> {
         val updated = reviewsService.editMarkAndReview(id, review)
         return if (updated != null) ResponseEntity.ok(updated)
         else ResponseEntity.notFound().build()
     }
 
     @DeleteMapping("/{id}")
-    fun deleteHairType(@PathVariable id: UUID): ResponseEntity<String> {
+    fun deleteRewview(@PathVariable id: UUID): ResponseEntity<String> {
         val deleted = reviewsService.delete(id)
         return if (deleted) ResponseEntity.ok("Review has deleted!")
         else ResponseEntity.notFound().build()
