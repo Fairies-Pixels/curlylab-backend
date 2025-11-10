@@ -8,20 +8,11 @@ data class Reviews (
     val userId: UUID,
     val productId: UUID,
     val date: LocalDateTime? = LocalDateTime.now(),
-    val mark: ReviewMarks,
+    val mark: Int,
     val review: String? = "",
 )
 
 data class MarkAndReview (
-    val mark: ReviewMarks? = null,
+    val mark: Int? = null,
     val review: String? = null,
 )
-
-enum class ReviewMarks {
-    ZERO_STARS,
-    ONE_STAR,
-    TWO_STARS,
-    THREE_STARS,
-    FOUR_STARS,
-    FIVE_STARS,
-}

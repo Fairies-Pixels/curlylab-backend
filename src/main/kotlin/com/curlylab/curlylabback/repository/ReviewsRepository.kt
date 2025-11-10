@@ -2,7 +2,6 @@ package com.curlylab.curlylabback.repository
 
 import com.curlylab.curlylabback.model.MarkAndReview
 import com.curlylab.curlylabback.model.Reviews
-import com.curlylab.curlylabback.model.ReviewMarks
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
@@ -26,7 +25,7 @@ class ReviewsRepositoryImpl(
             userId = UUID.fromString(rs.getString("user_id")),
             productId = UUID.fromString(rs.getString("product_id")),
             date = rs.getTimestamp("date").toLocalDateTime(),
-            mark =  ReviewMarks.valueOf(rs.getString("mark").uppercase()),
+            mark =  rs.getInt("mark"),
             review = rs.getString("review")
         )
     }
@@ -44,9 +43,13 @@ class ReviewsRepositoryImpl(
     }
 
     override fun add(entity: Reviews): Boolean {
+        if (entity.mark < 1 || entity.mark > 5) {
+            return false
+        }
+
         val sql = """
             INSERT INTO reviews (review_id, user_id, product_id, date, mark, review)
-            VALUES (?, ?, ?, ?, ?::marks_enum, ?)
+            VALUES (?, ?, ?, ?, ?, ?)
         """.trimIndent()
 
         return jdbcTemplate.update(
@@ -55,7 +58,7 @@ class ReviewsRepositoryImpl(
             entity.userId,
             entity.productId,
             entity.date,
-            entity.mark.name.lowercase(),
+            entity.mark,
             entity.review
         ) > 0
     }
@@ -80,15 +83,19 @@ class ReviewsRepositoryImpl(
         val newMark = entity.mark ?: oldReviews.mark
         val newReview = entity.review ?: oldReviews.review
 
+        if (newMark < 1 || newMark > 5) {
+            return null
+        }
+
         val sql = """
             UPDATE reviews
-            SET mark = ?::marks_enum, review = ?
+            SET mark = ?, review = ?
             WHERE review_id = ?
         """.trimIndent()
 
         val updated =  jdbcTemplate.update(
             sql,
-            newMark.name.lowercase(),
+            newMark,
             newReview,
             id
         ) > 0

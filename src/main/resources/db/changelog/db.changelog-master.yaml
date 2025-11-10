@@ -147,9 +147,10 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: mark
-                  type: marks_enum
+                  type: numeric
                   constraints:
                     nullable: false
+                    checkConstraint: "mark >= 1 AND mark <=5"
               - column:
                   name: review
                   type: text

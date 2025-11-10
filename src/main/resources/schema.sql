@@ -1,6 +1,5 @@
 CREATE TYPE IF NOT EXISTS public.porosity_enum AS ENUM ('high', 'low', 'medium');
 CREATE TYPE IF NOT EXISTS public.thickness_enum AS ENUM ('thick', 'thin');
-CREATE TYPE IF NOT EXISTS public.marks_enum AS ENUM ('zero_stars', 'one_star', 'two_stars', 'three_stars', 'four_stars', 'five_stars');
 
 CREATE TABLE IF NOT EXISTS public.users
 (
@@ -37,7 +36,7 @@ CREATE TABLE IF NOT EXISTS public.reviews
     user_id uuid NOT NULL,
     product_id uuid NOT NULL,
     date timestamp NOT NULL,
-    mark marks_enum NOT NULL,
+    mark numeric NOT NULL CHECK (mark >= 1 AND mark <= 5),
     review text,
     CONSTRAINT fk_user_review_user_id FOREIGN KEY (user_id)
         REFERENCES public.users(id)
