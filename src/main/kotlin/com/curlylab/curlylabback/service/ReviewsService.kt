@@ -1,8 +1,8 @@
 package com.curlylab.curlylabback.service
 
 import com.curlylab.curlylabback.model.MarkAndReview
-import com.curlylab.curlylabback.repository.ReviewsRepository
 import com.curlylab.curlylabback.model.Reviews
+import com.curlylab.curlylabback.repository.ReviewsRepository
 import org.springframework.stereotype.Service
 import java.util.*
 

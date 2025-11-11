@@ -2,7 +2,6 @@ package com.curlylab.curlylabback.controller
 
 import com.curlylab.curlylabback.model.MarkAndReview
 import com.curlylab.curlylabback.model.Reviews
-import com.curlylab.curlylabback.model.User
 import com.curlylab.curlylabback.service.ReviewsService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -34,7 +33,7 @@ class ReviewsController(
     }
 
     @DeleteMapping("/{id}")
-    fun deleteRewview(@PathVariable id: UUID): ResponseEntity<String> {
+    fun deleteReview(@PathVariable id: UUID): ResponseEntity<String> {
         val deleted = reviewsService.delete(id)
         return if (deleted) ResponseEntity.ok("Review has deleted!")
         else ResponseEntity.notFound().build()
