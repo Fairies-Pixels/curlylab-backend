@@ -11,7 +11,6 @@ import java.util.*
 
 interface ReviewsRepository : BaseInterfaceRepository<Reviews> {
     fun getAll(): List<Reviews>
-    fun editMarkAndReview(id: UUID, entity: MarkAndReview): Reviews?
 }
 
 @Repository
@@ -43,6 +42,7 @@ class ReviewsRepositoryImpl(
     }
 
     override fun add(entity: Reviews): Boolean {
+        entity.mark ?: return false
         if (entity.mark < 1 || entity.mark > 5) {
             return false
         }
@@ -69,10 +69,11 @@ class ReviewsRepositoryImpl(
     }
 
     override fun edit(id: UUID, entity: Reviews): Reviews? {
-        return null
+        val editableEntity = MarkAndReview(entity.mark, entity.review)
+        return editMarkAndReview(id, editableEntity)
     }
 
-    override fun editMarkAndReview(id: UUID, entity: MarkAndReview): Reviews? {
+    fun editMarkAndReview(id: UUID, entity: MarkAndReview): Reviews? {
         val oldReviews = get(id) ?: return null
 
         val creationDate = oldReviews.date ?: return null
@@ -80,7 +81,7 @@ class ReviewsRepositoryImpl(
            return null
         }
 
-        val newMark = entity.mark ?: oldReviews.mark
+        val newMark = (entity.mark ?: oldReviews.mark) ?: return null
         val newReview = entity.review ?: oldReviews.review
 
         if (newMark < 1 || newMark > 5) {

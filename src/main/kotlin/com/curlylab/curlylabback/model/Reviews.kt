@@ -8,7 +8,7 @@ data class Reviews (
     val userId: UUID,
     val productId: UUID,
     val date: LocalDateTime? = LocalDateTime.now(),
-    val mark: Int,
+    val mark: Int?,
     val review: String? = "",
 )
 

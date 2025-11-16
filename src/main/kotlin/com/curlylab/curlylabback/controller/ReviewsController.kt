@@ -26,8 +26,8 @@ class ReviewsController(
     }
 
     @PutMapping("/{id}")
-    fun updateReview(@PathVariable id: UUID, @RequestBody review: MarkAndReview): ResponseEntity<Reviews> {
-        val updated = reviewsService.editMarkAndReview(id, review)
+    fun updateReview(@PathVariable id: UUID, @RequestBody review: Reviews): ResponseEntity<Reviews> {
+        val updated = reviewsService.update(id, review)
         return if (updated != null) ResponseEntity.ok(updated)
         else ResponseEntity.notFound().build()
     }
