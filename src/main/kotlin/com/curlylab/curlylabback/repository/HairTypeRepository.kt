@@ -6,7 +6,6 @@ import com.curlylab.curlylabback.model.Thickness
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
-import java.sql.ResultSet
 import java.util.UUID
 
 interface HairTypeRepository : BaseInterfaceRepository<HairType>
@@ -16,12 +15,14 @@ class HairTypeRepositoryImpl(
     private val jdbcTemplate: JdbcTemplate
 ) : HairTypeRepository {
 
-    private val rowMapper = RowMapper<HairType> { rs: ResultSet, _: Int ->
+    private val rowMapper = RowMapper<HairType> { rs, _ ->
         HairType(
             userId = UUID.fromString(rs.getString("user_id")),
-            porosity = Porosity.valueOf(rs.getString("porosity").uppercase()),
+            porosity = rs.getString("porosity")
+                ?.let { Porosity.valueOf(it.uppercase()) },
             isColored = rs.getBoolean("is_colored"),
-            thickness = Thickness.valueOf(rs.getString("thickness").uppercase())
+            thickness = rs.getString("thickness")
+                ?.let { Thickness.valueOf(it.uppercase()) }
         )
     }
 
@@ -44,9 +45,9 @@ class HairTypeRepositoryImpl(
         return jdbcTemplate.update(
             sql,
             entity.userId,
-            entity.porosity.name.lowercase(),
+            entity.porosity?.name?.lowercase(),
             entity.isColored,
-            entity.thickness.name.lowercase()
+            entity.thickness?.name?.lowercase()
         ) > 0
     }
 
@@ -55,23 +56,25 @@ class HairTypeRepositoryImpl(
         return jdbcTemplate.update(sql, id) > 0
     }
 
-    override fun edit(id: UUID, entity: HairType): HairType? {
+    override fun edit(id: UUID, entity: HairType): HairType {
         val sql = """
-            UPDATE user_hairtypes
-            SET porosity = ?::porosity_enum,
-                is_colored = ?,
-                thickness = ?::thickness_enum
-            WHERE user_id = ?
-        """.trimIndent()
+        INSERT INTO user_hairtypes (user_id, porosity, is_colored, thickness)
+        VALUES (?::uuid, ?::porosity_enum, ?, ?::thickness_enum)
+        ON CONFLICT (user_id)
+        DO UPDATE SET
+            porosity  = COALESCE(EXCLUDED.porosity,  user_hairtypes.porosity),
+            is_colored = COALESCE(EXCLUDED.is_colored, user_hairtypes.is_colored),
+            thickness = COALESCE(EXCLUDED.thickness, user_hairtypes.thickness)
+    """.trimIndent()
 
-        val updated = jdbcTemplate.update(
+        jdbcTemplate.update(
             sql,
-            entity.porosity.name.lowercase(),
+            id,
+            entity.porosity?.name?.lowercase(),
             entity.isColored,
-            entity.thickness.name.lowercase(),
-            id
-        ) > 0
+            entity.thickness?.name?.lowercase()
+        )
 
-        return if (updated) get(id) else null
+        return get(id)!!
     }
 }
