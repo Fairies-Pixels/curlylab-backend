@@ -6,16 +6,23 @@ databaseChangeLog:
         - sql:
             sql: |
               DO $$ BEGIN
-                  CREATE TYPE porosity_enum AS ENUM ('high', 'low', 'medium');
+                CREATE TYPE porosity_enum AS ENUM ('high', 'low', 'medium');
               EXCEPTION
-                  WHEN duplicate_object THEN null;
+                WHEN duplicate_object THEN null;
               END $$;
         - sql:
             sql: |
               DO $$ BEGIN
                   CREATE TYPE thickness_enum AS ENUM ('thick', 'thin', 'medium');
               EXCEPTION
-                  WHEN duplicate_object THEN null;
+                WHEN duplicate_object THEN null;
+              END $$;
+        - sql:
+            sql: |
+              DO $$ BEGIN
+                CREATE TYPE marks_enum AS ENUM ('zero_stars', 'one_star', 'two_stars', 'three_stars', 'four_stars', 'five_stars');
+              EXCEPTION
+                WHEN duplicate_object THEN null;
               END $$;
 
   - changeSet:
@@ -109,3 +116,59 @@ databaseChangeLog:
               - column:
                   name: image_url
                   type: varchar(512)
+
+  - changeSet:
+      id: 004-create-reviews
+      author: yourname
+      changes:
+        - createTable:
+            tableName: reviews
+            columns:
+              - column:
+                  name: review_id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: mark
+                  type: numeric
+                  constraints:
+                    nullable: false
+                    checkConstraint: "mark >= 1 AND mark <=5"
+              - column:
+                  name: review
+                  type: text
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: reviews
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_user_review_user_id
+            onDelete: restrict
+            onUpdate: restrict
+        - addForeignKeyConstraint:
+            baseTableName: reviews
+            baseColumnNames: product_id
+            referencedTableName: products
+            referencedColumnNames: id
+            constraintName: fk_product_review_product_id
+            onDelete: restrict
+            onUpdate: restrict

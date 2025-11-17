@@ -29,3 +29,21 @@ CREATE TABLE IF NOT EXISTS public.products
     tags text,
     image_url varchar(512)
 );
+
+CREATE TABLE IF NOT EXISTS public.reviews
+(
+    review_id uuid NOT NULL PRIMARY KEY,
+    user_id uuid NOT NULL,
+    product_id uuid NOT NULL,
+    date timestamp NOT NULL,
+    mark numeric NOT NULL CHECK (mark >= 1 AND mark <= 5),
+    review text,
+    CONSTRAINT fk_user_review_user_id FOREIGN KEY (user_id)
+        REFERENCES public.users(id)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT,
+    CONSTRAINT fk_product_review_product_id FOREIGN KEY (product_id)
+        REFERENCES public.products(id)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT
+);
