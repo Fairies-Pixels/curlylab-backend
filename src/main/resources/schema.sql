@@ -47,3 +47,18 @@ CREATE TABLE IF NOT EXISTS public.reviews
         ON UPDATE RESTRICT
         ON DELETE RESTRICT
 );
+
+CREATE TABLE IF NOT EXISTS public.favourites
+(
+    user_id uuid NOT NULL,
+    product_id uuid NOT NULL,
+    CONSTRAINT reviews_pk PRIMARY KEY (user_id, product_id),
+    CONSTRAINT fk_favourites_users_user_id FOREIGN KEY (user_id)
+        REFERENCES public.users(id)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT,
+    CONSTRAINT fk_favourites_products_product_id FOREIGN KEY (product_id)
+        REFERENCES public.products(id)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT
+);
