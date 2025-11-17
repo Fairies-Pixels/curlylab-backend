@@ -9,6 +9,9 @@ import java.sql.ResultSet
 import java.util.*
 
 interface FavouriteRepository : BaseInterfaceRepository<Favourite> {
+    fun getALLForUser(user_id: UUID): List<Favourite>?
+    fun deleteByUserAndProduct(user_id: UUID, product_id: UUID): Boolean
+    fun getByUserAndProduct(user_id: UUID, product_id: UUID): Favourite?
 }
 
 @Repository
@@ -23,16 +26,42 @@ class FavouriteRepositoryImpl(
         )
     }
 
-    override fun get(id: UUID): Favourite? {
-        return null
+    override fun get(user_id: UUID): Favourite? {
+        val sql = "SELECT user_id, product_id FROM favourites WHERE user_id = ?"
+        return jdbcTemplate.query(sql, rowMapper, user_id).firstOrNull()
+    }
+
+    override fun getByUserAndProduct(user_id: UUID, product_id: UUID): Favourite? {
+        val sql = "SELECT user_id, product_id FROM favourites WHERE user_id = ? AND product_id = ?"
+        return jdbcTemplate.query(sql, rowMapper, user_id, product_id).firstOrNull()
+    }
+
+    override fun getALLForUser(user_id: UUID): List<Favourite>? {
+        val sql = "SELECT user_id, product_id FROM favourites WHERE user_id = ?"
+        return jdbcTemplate.query(sql, rowMapper, user_id)
     }
 
     override fun add(entity: Favourite): Boolean {
-        return false
+        val sql = """
+            INSERT INTO favourites (user_id, product_id)
+            VALUES (?, ?)
+        """.trimIndent()
+
+        return jdbcTemplate.update(
+            sql,
+            entity.userId,
+            entity.productId,
+        ) > 0
     }
 
-    override fun delete(id: UUID): Boolean {
-        return false
+    override fun delete(product_id: UUID): Boolean {
+        val sql = "DELETE FROM favourites WHERE product_id = ?"
+        return jdbcTemplate.update(sql, product_id) > 0
+    }
+
+    override fun deleteByUserAndProduct(user_id: UUID, product_id: UUID): Boolean {
+        val sql = "DELETE FROM favourites WHERE user_id = ? AND product_id = ?"
+        return jdbcTemplate.update(sql, user_id, product_id) > 0
     }
 
     override fun edit(id: UUID, entity: Favourite): Favourite? {
