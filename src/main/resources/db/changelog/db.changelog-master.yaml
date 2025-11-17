@@ -13,7 +13,7 @@ databaseChangeLog:
         - sql:
             sql: |
               DO $$ BEGIN
-                CREATE TYPE thickness_enum AS ENUM ('thick', 'thin');
+                  CREATE TYPE thickness_enum AS ENUM ('thick', 'thin', 'medium');
               EXCEPTION
                 WHEN duplicate_object THEN null;
               END $$;
@@ -69,17 +69,17 @@ databaseChangeLog:
                   name: porosity
                   type: porosity_enum
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: is_colored
                   type: boolean
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: thickness
                   type: thickness_enum
                   constraints:
-                    nullable: false
+                    nullable: true
         - addForeignKeyConstraint:
             baseTableName: user_hairtypes
             baseColumnNames: user_id
