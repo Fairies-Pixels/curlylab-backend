@@ -1,5 +1,5 @@
 CREATE TYPE IF NOT EXISTS public.porosity_enum AS ENUM ('high', 'low', 'medium');
-CREATE TYPE IF NOT EXISTS public.thickness_enum AS ENUM ('thick', 'thin');
+CREATE TYPE IF NOT EXISTS public.thickness_enum AS ENUM ('thick', 'thin', 'medium');
 
 CREATE TABLE IF NOT EXISTS public.users
 (
@@ -12,9 +12,9 @@ CREATE TABLE IF NOT EXISTS public.users
 CREATE TABLE IF NOT EXISTS public.user_hairtypes
 (
     user_id uuid NOT NULL PRIMARY KEY,
-    porosity porosity_enum NOT NULL,
-    is_colored boolean NOT NULL,
-    thickness thickness_enum NOT NULL,
+    porosity porosity_enum,
+    is_colored boolean,
+    thickness thickness_enum,
     CONSTRAINT fk_user_hairtypes_user_id FOREIGN KEY (user_id)
         REFERENCES public.users(id)
         ON UPDATE RESTRICT
@@ -43,6 +43,21 @@ CREATE TABLE IF NOT EXISTS public.reviews
         ON UPDATE RESTRICT
         ON DELETE RESTRICT,
     CONSTRAINT fk_product_review_product_id FOREIGN KEY (product_id)
+        REFERENCES public.products(id)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT
+);
+
+CREATE TABLE IF NOT EXISTS public.favourites
+(
+    user_id uuid NOT NULL,
+    product_id uuid NOT NULL,
+    CONSTRAINT reviews_pk PRIMARY KEY (user_id, product_id),
+    CONSTRAINT fk_favourites_users_user_id FOREIGN KEY (user_id)
+        REFERENCES public.users(id)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT,
+    CONSTRAINT fk_favourites_products_product_id FOREIGN KEY (product_id)
         REFERENCES public.products(id)
         ON UPDATE RESTRICT
         ON DELETE RESTRICT

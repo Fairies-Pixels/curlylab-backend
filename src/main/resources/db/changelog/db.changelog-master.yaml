@@ -13,7 +13,7 @@ databaseChangeLog:
         - sql:
             sql: |
               DO $$ BEGIN
-                CREATE TYPE thickness_enum AS ENUM ('thick', 'thin');
+                  CREATE TYPE thickness_enum AS ENUM ('thick', 'thin', 'medium');
               EXCEPTION
                 WHEN duplicate_object THEN null;
               END $$;
@@ -69,17 +69,17 @@ databaseChangeLog:
                   name: porosity
                   type: porosity_enum
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: is_colored
                   type: boolean
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: thickness
                   type: thickness_enum
                   constraints:
-                    nullable: false
+                    nullable: true
         - addForeignKeyConstraint:
             baseTableName: user_hairtypes
             baseColumnNames: user_id
@@ -172,3 +172,41 @@ databaseChangeLog:
             constraintName: fk_product_review_product_id
             onDelete: restrict
             onUpdate: restrict
+
+
+  - changeSet:
+      id: 005-create-favourites
+      author: yourname
+      changes:
+        - createTable:
+            tableName: favourites
+            columns:
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: favourites
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_favourites_users_user_id
+            onDelete: restrict
+            onUpdate: restrict
+        - addForeignKeyConstraint:
+            baseTableName: favourites
+            baseColumnNames: product_id
+            referencedTableName: products
+            referencedColumnNames: id
+            constraintName: fk_favourites_products_product_id
+            onDelete: restrict
+            onUpdate: restrict
+
