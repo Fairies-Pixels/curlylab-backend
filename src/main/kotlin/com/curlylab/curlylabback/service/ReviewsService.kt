@@ -13,8 +13,4 @@ class ReviewsService(
     fun getAllForProduct(product_id: UUID): List<Reviews> {
         return reviewsRepository.getAllForProduct(product_id)
     }
-
-    fun getByProductAndUser(productId: UUID, userId: UUID): Reviews? {
-        return reviewsRepository.getByProductAndUser(productId, userId)
-    }
 }
