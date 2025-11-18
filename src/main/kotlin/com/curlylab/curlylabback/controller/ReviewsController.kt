@@ -29,13 +29,9 @@ class ReviewsController(
         else ResponseEntity.badRequest().body("Failed to create a review")
     }
 
-    @PutMapping("/{product_id}/reviews/{user_id}")
-    fun updateReview(@PathVariable product_id: UUID, @PathVariable user_id: UUID, @RequestBody review: Reviews): ResponseEntity<Reviews> {
-        val id = reviewsService.getByProductAndUser(product_id, user_id)?.reviewId
-        if (id == null) {
-            return ResponseEntity.notFound().build()
-        }
-        val updated = reviewsService.update(id, review)
+    @PutMapping("/{product_id}/reviews/{review_id}")
+    fun updateReview(@PathVariable product_id: UUID, @PathVariable review_id: UUID, @RequestBody review: Reviews): ResponseEntity<Reviews> {
+        val updated = reviewsService.update(review_id, review)
         return if (updated != null) ResponseEntity.ok(updated)
         else ResponseEntity.notFound().build()
     }

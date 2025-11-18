@@ -11,7 +11,6 @@ import java.util.*
 
 interface ReviewsRepository : BaseInterfaceRepository<Reviews> {
     fun getAllForProduct(product_id: UUID): List<Reviews>
-    fun getByProductAndUser(productId: UUID, userId: UUID): Reviews?
 }
 
 @Repository
@@ -44,13 +43,6 @@ class ReviewsRepositoryImpl(
                 FROM reviews
                 WHERE review_id = ?"""
         return jdbcTemplate.query(sql, rowMapper, id).firstOrNull()
-    }
-
-    override fun getByProductAndUser(productId: UUID, userId: UUID): Reviews? {
-        val sql = """SELECT review_id, user_id, product_id, date, mark, review
-                FROM reviews
-                WHERE product_id = ? AND user_id = ?"""
-        return jdbcTemplate.query(sql, rowMapper, productId, userId).firstOrNull()
     }
 
     override fun add(entity: Reviews): Boolean {
