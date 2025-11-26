@@ -20,7 +20,7 @@ class AuthService(
 ) {
     fun register(email: String, password: String, username: String): Tokens {
         if (userAuthRepo.findByEmail(email) != null)
-            throw IllegalArgumentException("Email already exists")
+            throw EmailAlreadyExistsException(email)
 
         val salt = BCrypt.gensalt()
         val hash = BCrypt.hashpw(password, salt)
@@ -76,3 +76,6 @@ data class Tokens(
     val access: String,
     val refresh: String
 )
+
+class EmailAlreadyExistsException(email: String) :
+    RuntimeException("User with email $email already exists")
