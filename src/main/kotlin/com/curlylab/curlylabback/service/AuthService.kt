@@ -70,6 +70,14 @@ class AuthService(
 
         return Tokens(access, refresh)
     }
+
+    fun logout(refreshToken: String) {
+        val token = refreshRepo.findValid(refreshToken)
+            ?: throw IllegalArgumentException("Invalid refresh token")
+
+        refreshRepo.revoke(token.id)
+    }
+
 }
 
 data class Tokens(

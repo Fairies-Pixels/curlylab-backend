@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS public.user_hairtypes
     CONSTRAINT fk_user_hairtypes_user_id FOREIGN KEY (user_id)
         REFERENCES public.users(id)
         ON UPDATE RESTRICT
-        ON DELETE RESTRICT
+        ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS public.products
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS public.reviews
     CONSTRAINT fk_user_review_user_id FOREIGN KEY (user_id)
         REFERENCES public.users(id)
         ON UPDATE RESTRICT
-        ON DELETE RESTRICT,
+        ON DELETE CASCADE,
     CONSTRAINT fk_product_review_product_id FOREIGN KEY (product_id)
         REFERENCES public.products(id)
         ON UPDATE RESTRICT
@@ -52,11 +52,11 @@ CREATE TABLE IF NOT EXISTS public.favourites
 (
     user_id uuid NOT NULL,
     product_id uuid NOT NULL,
-    CONSTRAINT reviews_pk PRIMARY KEY (user_id, product_id),
+    CONSTRAINT favourites_pk PRIMARY KEY (user_id, product_id),
     CONSTRAINT fk_favourites_users_user_id FOREIGN KEY (user_id)
         REFERENCES public.users(id)
         ON UPDATE RESTRICT
-        ON DELETE RESTRICT,
+        ON DELETE CASCADE,
     CONSTRAINT fk_favourites_products_product_id FOREIGN KEY (product_id)
         REFERENCES public.products(id)
         ON UPDATE RESTRICT
@@ -66,45 +66,45 @@ CREATE TABLE IF NOT EXISTS public.favourites
 CREATE TABLE IF NOT EXISTS public.user_auth
 (
     user_id uuid NOT NULL,
-    email character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    password_hash character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    salt character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    email character varying(255) NOT NULL,
+    password_hash character varying(255) NOT NULL,
+    salt character varying(255) NOT NULL,
     created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT user_auth_pkey PRIMARY KEY (user_id),
     CONSTRAINT user_auth_email_unique UNIQUE (email),
     CONSTRAINT fk_user_auth_user_id FOREIGN KEY (user_id)
-        REFERENCES public.users (id) MATCH SIMPLE
+        REFERENCES public.users (id)
         ON UPDATE RESTRICT
-        ON DELETE RESTRICT
-)
+        ON DELETE CASCADE
+);
 
 CREATE TABLE IF NOT EXISTS public.user_refresh_tokens
 (
     id uuid NOT NULL,
     user_id uuid NOT NULL,
-    token character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    token character varying(255) NOT NULL,
     expires_at timestamp without time zone NOT NULL,
     created_at timestamp without time zone NOT NULL,
     revoked boolean NOT NULL DEFAULT false,
     CONSTRAINT user_refresh_tokens_pkey PRIMARY KEY (id),
     CONSTRAINT fk_user_refresh_tokens_user_id FOREIGN KEY (user_id)
-        REFERENCES public.users (id) MATCH SIMPLE
+        REFERENCES public.users (id)
         ON UPDATE RESTRICT
-        ON DELETE RESTRICT
-)
+        ON DELETE CASCADE
+);
 
 CREATE TABLE IF NOT EXISTS public.user_providers
 (
     id uuid NOT NULL DEFAULT gen_random_uuid(),
     user_id uuid NOT NULL,
-    provider character varying(50) COLLATE pg_catalog."default" NOT NULL,
-    provider_user_id character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    email character varying(255) COLLATE pg_catalog."default",
+    provider character varying(50) NOT NULL,
+    provider_user_id character varying(255) NOT NULL,
+    email character varying(255),
     created_at timestamp without time zone DEFAULT now(),
     CONSTRAINT user_providers_pkey PRIMARY KEY (id),
     CONSTRAINT user_providers_provider_provider_user_id_key UNIQUE (provider, provider_user_id),
-    CONSTRAINT user_providers_user_id_fkey FOREIGN KEY (user_id)
-        REFERENCES public.users (id) MATCH SIMPLE
+    CONSTRAINT fk_user_providers_user_id FOREIGN KEY (user_id)
+        REFERENCES public.users (id)
         ON UPDATE NO ACTION
         ON DELETE CASCADE
-)
+);
