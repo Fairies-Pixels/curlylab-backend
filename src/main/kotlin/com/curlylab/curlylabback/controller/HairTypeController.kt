@@ -15,8 +15,7 @@ class HairTypeController(
     @GetMapping("/{userId}")
     fun getHairType(@PathVariable userId: UUID): ResponseEntity<HairType> {
         val hairType = hairTypeService.getById(userId)
-        return if (hairType != null) ResponseEntity.ok(hairType)
-        else ResponseEntity.notFound().build()
+        return ResponseEntity.ok(hairType)
     }
 
     @PostMapping

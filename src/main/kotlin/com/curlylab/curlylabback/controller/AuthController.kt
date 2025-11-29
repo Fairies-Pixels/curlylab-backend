@@ -58,8 +58,21 @@ class AuthController(
                 .body(mapOf("error" to (e.message ?: "Google login failed")))
         }
     }
+
+    @PostMapping("/logout")
+    fun logout(@RequestBody req: LogoutRequest): ResponseEntity<Any> {
+        return try {
+            auth.logout(req.refreshToken)
+            ResponseEntity.ok(mapOf("message" to "Logged out successfully"))
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(mapOf("error" to e.message))
+        }
+    }
+
 }
 
 data class RegisterRequest(val email: String, val password: String, val username: String)
 data class LoginRequest(val email: String, val password: String)
 data class GoogleRequest(val idToken: String)
+data class LogoutRequest(val refreshToken: String)

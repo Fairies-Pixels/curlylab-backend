@@ -68,25 +68,19 @@ databaseChangeLog:
               - column:
                   name: porosity
                   type: porosity_enum
-                  constraints:
-                    nullable: true
               - column:
                   name: is_colored
                   type: boolean
-                  constraints:
-                    nullable: true
               - column:
                   name: thickness
                   type: thickness_enum
-                  constraints:
-                    nullable: true
         - addForeignKeyConstraint:
             baseTableName: user_hairtypes
             baseColumnNames: user_id
             referencedTableName: users
             referencedColumnNames: id
             constraintName: fk_user_hairtypes_user_id
-            onDelete: restrict
+            onDelete: cascade
             onUpdate: restrict
 
   - changeSet:
@@ -162,7 +156,7 @@ databaseChangeLog:
             referencedTableName: users
             referencedColumnNames: id
             constraintName: fk_user_review_user_id
-            onDelete: restrict
+            onDelete: cascade
             onUpdate: restrict
         - addForeignKeyConstraint:
             baseTableName: reviews
@@ -172,7 +166,6 @@ databaseChangeLog:
             constraintName: fk_product_review_product_id
             onDelete: restrict
             onUpdate: restrict
-
 
   - changeSet:
       id: 005-create-favourites
@@ -199,7 +192,7 @@ databaseChangeLog:
             referencedTableName: users
             referencedColumnNames: id
             constraintName: fk_favourites_users_user_id
-            onDelete: restrict
+            onDelete: cascade
             onUpdate: restrict
         - addForeignKeyConstraint:
             baseTableName: favourites
@@ -209,6 +202,7 @@ databaseChangeLog:
             constraintName: fk_favourites_products_product_id
             onDelete: restrict
             onUpdate: restrict
+
   - changeSet:
       id: 006-create-user-auth
       author: yourname
@@ -244,15 +238,15 @@ databaseChangeLog:
                   defaultValueComputed: CURRENT_TIMESTAMP
                   constraints:
                     nullable: false
-
         - addForeignKeyConstraint:
             baseTableName: user_auth
             baseColumnNames: user_id
             referencedTableName: users
             referencedColumnNames: id
             constraintName: fk_user_auth_user_id
-            onDelete: restrict
+            onDelete: cascade
             onUpdate: restrict
+
   - changeSet:
       id: 007-create-user-refresh-tokens
       author: yourname
@@ -292,17 +286,17 @@ databaseChangeLog:
                   defaultValueBoolean: false
                   constraints:
                     nullable: false
-
         - addForeignKeyConstraint:
             baseTableName: user_refresh_tokens
             baseColumnNames: user_id
             referencedTableName: users
             referencedColumnNames: id
             constraintName: fk_user_refresh_tokens_user_id
-            onDelete: restrict
+            onDelete: cascade
             onUpdate: restrict
+
   - changeSet:
-      id: 007-create-user-providers
+      id: 008-create-user-providers
       author: yourname
       changes:
         - createTable:
@@ -337,12 +331,10 @@ databaseChangeLog:
                   name: created_at
                   type: timestamp
                   defaultValueComputed: now()
-
         - addUniqueConstraint:
             tableName: user_providers
             columnNames: provider, provider_user_id
             constraintName: user_providers_provider_provider_user_id_key
-
         - addForeignKeyConstraint:
             baseTableName: user_providers
             baseColumnNames: user_id
