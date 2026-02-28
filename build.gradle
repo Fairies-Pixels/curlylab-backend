@@ -29,6 +29,10 @@ dependencies {
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
 	implementation 'org.liquibase:liquibase-core'
 	runtimeOnly 'org.postgresql:postgresql'
+    testImplementation 'io.mockk:mockk:1.13.10'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.0'
+    testImplementation 'org.assertj:assertj-core:3.24.2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
 	testImplementation 'org.springframework.amqp:spring-rabbit-test'
@@ -51,4 +55,51 @@ kotlin {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = "0.8.12"
+}
+
+tasks.register('jacoco-backend-test-report', JacocoReport) {
+    dependsOn tasks.named('test')
+
+    reports {
+        xml.required = true
+        html.required = true
+    }
+
+    def fileFilter = [
+            '**/R.class',
+            '**/R$*.class',
+            '**/BuildConfig.*',
+            '**/Manifest*.*',
+            '**/*Test*.*',
+            '**/*Application*.*',
+            '**/config/*',
+            '**/dto/*',
+            '**/model/*',
+            '**/entity/*'
+    ]
+
+    def mainSrc = "$projectDir/src/main/kotlin"
+    def kotlinClasses = "$buildDir/classes/kotlin/main"
+
+    sourceDirectories.setFrom(files([mainSrc]))
+    classDirectories.setFrom(
+            fileTree(dir: kotlinClasses, excludes: fileFilter)
+    )
+
+    executionData.setFrom(fileTree(dir: "$buildDir", includes: [
+            "jacoco/test.exec",
+            "jacoco/testDebugUnitTest.exec",
+            "outputs/unit_test_code_coverage/test.exec"
+    ]))
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    finalizedBy tasks.named('jacoco-backend-test-report')
 }
